@@ -9,11 +9,15 @@
 - Mettre en commentaire la ligne DATABSE postgresql
 - Changer user_db et password_db
 
-```DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7"```
+```
+DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7"
+```
 
 ### Déplacer le terminal dans le projet cloné
 
-```cd leblogdebatman```
+```
+cd leblogdebatman
+```
 
 ### Taper les commandes suivantes
  ```
@@ -25,4 +29,6 @@
  ```
 
 ### Démarrer le serveur web
-``` symfony server:start```
+``` 
+symfony server:start
+```
