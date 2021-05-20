@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <h1 class="col-12 text-center my-5">Connexion</h1>
+        </div>
+
+        {# Formulaire de connexion #}
+        <div class="row">
+            <div class="col-12 col-md-4 offset-md-4">
+
+                <form action="{{ path('main_login') }}" method="POST">
+
+                    {# Si le formulaire de connexion possède une erreur, on l'affiche #}
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+                    {# Champ email #}
+                    <div class="mb-3">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+                    </div>
+
+                    {# Champ password #}
+                    <div class="mb-3">
+                        <label for="inputPassword">Mot de passe</label>
+                        <input type="password" name="password" id="inputPassword" class="form-control" required>
+                    </div>
+
+                    {# Champ invisible token sécurisé anti attaque CSRF #}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <input type="submit" class="btn btn-outline-primary col-12">
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
