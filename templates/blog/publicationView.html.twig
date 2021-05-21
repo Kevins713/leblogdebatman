@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <h1 class="col-12 text-center my-5">{{ article.title }}</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-8 offset-md-2">
+                <div class="card my-2 bg-black">
+                    <div class="card-body">
+                        <div class="blockquote mb-0">
+
+                            {# Affichage de la date de publication + nom auteur #}
+                            <footer class="blockquote-footer mt-1 mb-2">
+                                Publié le
+                                <strong class="text-light">{{ article.publicationDate|date('d/m/Y à H\\hi') }}</strong>
+                                par
+                                <strong class="text-light">{{ article.author.pseudonym}}</strong>
+                            </footer>
+                            {# Affichage du contenu de l'article #}
+                            <div class="mb-2">{{ article.content }}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <p class="text-center col-12">
+                <a href="{{ path('blog_publication_list') }}">Retour à la liste des articles</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
