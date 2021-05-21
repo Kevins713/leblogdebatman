@@ -70,7 +70,6 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ]
             ])
-
             ->add('save', SubmitType::class, [
                 'label' => 'Créer mon compte',
                 'attr' => [
