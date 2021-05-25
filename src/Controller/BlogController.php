@@ -120,11 +120,39 @@ class BlogController extends AbstractController
                 'slug' => $article->getSlug(),
             ]);
         }
-
         // Appel de la vue en envoyant le formulaire à afficher
         return $this->render('blog/publicationEdit.html.twig', [
             'articleForm' => $form->createView(),
         ]);
+    }
+
+    /**
+     *
+     * @Route("/publication/suppression/{id}", name="publication_delete")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function publicationDelete(Article $article, Request $request): Response
+    {
+
+        // Récupération du token csrf dans l'url
+        $tokenCSRF = $request->query->get('csrf_token');
+
+        // Vérification que le token est valide
+        if( !$this->isCsrfTokenValid('blog_publication_delete_' . $article->getId(),
+            $tokenCSRF)){
+
+            $this->addFlash('error', 'Token sécurité invalide, veuillez ré-essayer.');
+        } else {
+
+            // Suppression de l'article
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($article);
+            $em->flush();
+
+            $this->addFlash('success', 'La publication a été supprimée avec succès !');
+        }
+
+        return $this->redirectToRoute('blog_publication_list');
     }
 
 
