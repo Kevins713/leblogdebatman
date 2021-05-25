@@ -21,8 +21,8 @@
                                 par
                                 <strong class="text-light">{{ article.author.pseudonym}}</strong>
                             </footer>
-                            {# Affichage du contenu de l'article #}
-                            <div class="mb-2">{{ article.content }}</div>
+                            {# Affichage du contenu de l'article avec le filtre purify pour nettoyer le code html dangereux qu'il pourrait y avoir dedans #}
+                            <div class="mb-2">{{ article.content|purify }}</div>
                         </div>
 
                     </div>

@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 
 class ArticleType extends AbstractType
 {
@@ -34,11 +35,12 @@ class ArticleType extends AbstractType
                     ])
                 ]
             ])
-            ->add('content', TextareaType::class, [
+            ->add('content', CKEditorType::class, [
                 'label' => 'Contenu',
+                'purify_html' => true,
                 'attr' => [
                     'placeholder' => 'Ex : Bonjour, ...',
-                    'rows' => '10'
+                    'class' => 'd-none'
                 ],
                 'constraints' => [
                     new Length([

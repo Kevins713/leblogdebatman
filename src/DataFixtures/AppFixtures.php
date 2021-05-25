@@ -53,6 +53,7 @@ class AppFixtures extends Fixture
                 ->setPassword($this->encoder->encodePassword($user, 'Azerty12!'))
             ;
 
+            // Persistance de l'utilisateur
             $manager->persist($user);
         }
 

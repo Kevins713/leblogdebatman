@@ -29,7 +29,8 @@
                                 </div>
                                 <div class="body">
                                     <div class="blockquote mb-0">
-                                        <p class="mb-4">{{  article.content|slice(0, 150) }}...<a href="{{ path('blog_publication_view', {slug: article.slug})
+                                        <p class="mb-4">{{  article.content|striptags|slice(0, 150) }}...<a href="{{ path('blog_publication_view', {slug:
+                                                article.slug})
                                             }}">Lire
                                                 la suite</a></p>
                                         <footer class="blockquote-footer">
