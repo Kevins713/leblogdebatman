@@ -11,8 +11,25 @@
 
         <div class="row">
             <div class="col-12 col-md-4 offset-md-4">
-                {{ form(registrationForm) }}
+                {{ form_start(registrationForm) }}
+                    {{ form_errors(registrationForm) }}
+                    {{ form_row(registrationForm.email) }}
+                    {{ form_row(registrationForm.plainPassword) }}
+                    {{ form_row(registrationForm.pseudonym) }}
+                    <div class="my-4 d-flex justify-content-center">
+                        <div class="g-recaptcha" data-sitekey="{{ google_recaptcha_site_key }}"></div>
+                    </div>
+
+                    {{ form_row(registrationForm.save) }}
+
+                {{ form_end(registrationForm) }}
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block css %}
+    {# Inclusion du fichier JS permettant de faie fonctionner le recaptcha de Google #}
+    {# Ce fichier doit être dans le head HTML, d'ou sont inclusion dans le block "css" #}
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 {% endblock %}
