@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {# "Nouvelle page" sera le titre par défaut si jamais une page ne défini pas de title #}
-    <title>{% block title %}Nouvelle Page{% endblock %} - Le Blog de Batman</title>
+    <title>{% block title %}Nouvelle Page{% endblock %} - {{ site_name }}</title>
     {# Inclusions des fichiers CSS généraux du site #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
     <link href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
             {# Logo et titre du site #}
             <a class="navbar-brand" href="{{ path('main_home') }}">
                 <img src="{{ asset('images/embleme-batman.png') }}" alt="" class="main-navbar-logo">
-                Le Blog de Batman
+                {{ site_name }}
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
