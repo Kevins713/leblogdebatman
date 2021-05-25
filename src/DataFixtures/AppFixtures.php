@@ -38,6 +38,42 @@ class AppFixtures extends Fixture
         ;
 
         $manager->persist($admin);
+
+        // Création de 50 comptes utilisateurs
+        for ($i = 0; $i < 50; $i++){
+
+            // Création d'un nouveau compte
+            $user = new User();
+
+            // Hydratation du compte avec des données aléatoires
+            $user
+                ->setEmail($faker->email)
+                ->setRegistrationDate($faker->dateTimeBetween('-1 year', 'now'))
+                ->setPseudonym($faker->userName)
+                ->setPassword($this->encoder->encodePassword($user, 'Azerty12!'))
+            ;
+
+            $manager->persist($user);
+        }
+
+        // Création de 200 articles
+        for ($i = 0; $i < 200; $i++){
+
+            // Création d'un nouvel article
+            $article = new Article();
+
+            // Hydratation de l'article
+            $article
+                ->setPublicationDate($faker->dateTimeBetween($admin->getRegistrationDate(), 'now'))
+                ->setAuthor($admin)
+                ->setTitle($faker->sentence(10))
+                ->setContent($faker->paragraph(15))
+            ;
+
+            // Persistance de l'article
+            $manager->persist($article);
+        }
+
         $manager->flush();
     }
 }
