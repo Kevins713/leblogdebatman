@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification d'une publication{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h1 class="col-12 text-center my-5">Modification d'une publication</h1>
+        </div>
+        <div class="row">
+            <div class="col-12 ">
+                {# Affichage du formulaire #}
+                {{ form(articleForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

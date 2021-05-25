@@ -90,5 +90,42 @@ class BlogController extends AbstractController
         ]);
     }
 
+    /**
+     * Page admin permettant de modifier un article existant
+     * @Route("/publication/modifier/{id}/", name="publication_edit")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function publicationEdit(Article $article, Request $request): Response
+    {
+
+        // Création du formulaire de modification d'article (c'est le même formulaire que celui de la page de création d'un article, sauf qu'il sera déja
+        // rempli avec les données de l'article "$article")
+        $form = $this->createForm(ArticleType::class, $article);
+
+        // Liaison des données POST avec le formulaire
+        $form->handleRequest($request);
+
+        // Si le formulaire est envoyé et n'as pas d'erreur
+        if($form->isSubmitted() && $form->isValid()){
+
+            // Sauvegarde des changements dans la BDD
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            // Message flash de succès
+            $this->addFlash('success', 'Article modifié avec succès !');
+
+            // Redirection vers la page de l'article modifié
+            return $this->redirectToRoute('blog_publication_view', [
+                'slug' => $article->getSlug(),
+            ]);
+        }
+
+        // Appel de la vue en envoyant le formulaire à afficher
+        return $this->render('blog/publicationEdit.html.twig', [
+            'articleForm' => $form->createView(),
+        ]);
+    }
+
 
 }
