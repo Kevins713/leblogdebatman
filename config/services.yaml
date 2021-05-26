@@ -6,6 +6,7 @@
 parameters:
     site_name: 'Le Blog de Batman'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    homepage_articles_number: 5
 
 services:
     # default configuration for services in *this* file
