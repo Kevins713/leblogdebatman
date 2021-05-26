@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des publications{% endblock %}
+{% block title %}Résulat de recherche {% endblock %}
 
 {% block body %}
     <div class="container-fluid">
         <div class="row">
-            <h1 class="col-12 text-center my-5">Publication du Blog de Batman</h1>
+            <h1 class="col-12 text-center my-5">Résulat de la recherche "{{ app.request.query.get('q') }}"</h1>
         </div>
 
         <div class="row">
@@ -13,7 +13,7 @@
 
                 {# Affichage du nombre total d'articles #}
                 <div class="row">
-                    <p class="col-12 text-center">Nombre total d'articles : {{ articles.getTotalItemCount }}</p>
+                    <p class="col-12 text-center">Nombre total de résultat : {{ articles.getTotalItemCount }}</p>
                 </div>
 
                 {% if articles is not empty %}
@@ -73,9 +73,9 @@
                         </div>
 
                 {% else %}
-                        <p class="col-12 text-center alert alert-warning">Aucune publication à afficher.</p>
-                {% endfor %}
+                        <p class="col-12 text-center alert alert-warning">Aucun résultat pour cette recherche.</p>
                     </div>
+                {% endfor %}
 
                 {% if articles is not empty %}
 

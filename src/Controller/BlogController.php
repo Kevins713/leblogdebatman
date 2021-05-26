@@ -81,7 +81,7 @@ class BlogController extends AbstractController
         $em = $this->getDoctrine()->getManager();
 
         // Création d'une requête qui servira au paginator pour récuperer les articles de la page courante
-        $query = $em->createQuery('SELECT a FROM App\Entity\Article a');
+        $query = $em->createQuery('SELECT a FROM App\Entity\Article a ORDER BY a.publicationDate DESC');
 
         // On stocke dans $articles les 10 articles de la page demandée dans l'url
         $articles = $paginator->paginate(
@@ -89,8 +89,6 @@ class BlogController extends AbstractController
             $requestedPage,     // Numéro de la page actuelle
             10                  // Nombre d'articles par page
         );
-        dump($articles);
-
 
         // Appel de la vue en lui envoyant la liste des articles
         return $this->render('blog/publicationList.html.twig', [
@@ -159,7 +157,7 @@ class BlogController extends AbstractController
 
         // Vérification que le token est valide
         if( !$this->isCsrfTokenValid('blog_publication_delete_' . $article->getId(),
-            $tokenCSRF)){
+        $tokenCSRF)){
 
             $this->addFlash('error', 'Token sécurité invalide, veuillez ré-essayer.');
         } else {
@@ -173,6 +171,42 @@ class BlogController extends AbstractController
         }
 
         return $this->redirectToRoute('blog_publication_list');
+    }
+
+    /**
+     * Page qui affiche les résulat de recherche du formulaire dans la navbar
+     * @Route("/recherche/", name="search")
+     */
+    public function search(Request $request, PaginatorInterface $paginator): Response
+    {
+
+        // On récupère dans l'url, la données GET['page'] (si elle n'existe pas, la valeur par défaut sera "1")
+        $requestedPage = $request->query->getInt('page', 1);
+
+        if($requestedPage < 1){
+            throw new NotFoundHttpException();
+        }
+        $em = $this->getDoctrine()->getManager();
+
+        // Récupération de la recherche dans le formulaire
+        $search = $request->query->get('q');
+
+        // Création de la requête (préparée pour éviter les injections SQL)
+        $query = $em
+            ->createQuery('SELECT a FROM App\Entity\Article a WHERE a.title LIKE :search OR a.content LIKE :search ORDER BY a.publicationDate DESC')
+            ->setParameters(['search' => '%' . $search . '%'])
+        ;
+
+        // Récupération des articles
+        $articles = $paginator->paginate(
+            $query,
+            $requestedPage,
+            15
+        );
+
+        return $this->render('blog/search.html.twig', [
+            'articles' => $articles,
+        ]);
     }
 
 
