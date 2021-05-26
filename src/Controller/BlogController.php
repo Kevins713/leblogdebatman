@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use DateTime;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class BlogController
@@ -64,13 +66,31 @@ class BlogController extends AbstractController
      *
      * @Route("/publications/liste/", name="publication_list")
      */
-    public function publicationList(): Response
+    public function publicationList(Request $request, PaginatorInterface $paginator): Response
     {
 
-        // Récupération du repository des articles pour pouvoir les récupérer
-        $articleRepo = $this->getDoctrine()->getRepository(Article::class);
+        // On récupère dans l'url, la données GET['page'] (si elle n'existe pas, la valeur par défaut sera "1")
+        $requestedPage = $request->query->getInt('page', 1);
 
-        $articles = $articleRepo->findAll();
+        // Si le numéro de page demandé dans l'URL est inferieur à 1, erreur 404
+        if($requestedPage < 1){
+            throw new NotFoundHttpException();
+        }
+
+        // Récupération du manager général des entités
+        $em = $this->getDoctrine()->getManager();
+
+        // Création d'une requête qui servira au paginator pour récuperer les articles de la page courante
+        $query = $em->createQuery('SELECT a FROM App\Entity\Article a');
+
+        // On stocke dans $articles les 10 articles de la page demandée dans l'url
+        $articles = $paginator->paginate(
+            $query,             // Requête de selection
+            $requestedPage,     // Numéro de la page actuelle
+            10                  // Nombre d'articles par page
+        );
+        dump($articles);
+
 
         // Appel de la vue en lui envoyant la liste des articles
         return $this->render('blog/publicationList.html.twig', [

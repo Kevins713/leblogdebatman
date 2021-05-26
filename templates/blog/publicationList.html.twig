@@ -10,10 +10,23 @@
 
         <div class="row">
             <div class="col-12 col-md-8 offset-md-2">
+
                 {# Affichage du nombre total d'articles #}
                 <div class="row">
-                    <p class="col-12 text-center">Nombre total d'articles : {{ articles|length }}</p>
+                    <p class="col-12 text-center">Nombre total d'articles : {{ articles.getTotalItemCount }}</p>
                 </div>
+
+                {% if articles is not empty %}
+
+                    <div class="row">
+                        <div class="col-12 my-3 text-center">
+                            <div class="d-inline-block">
+                                {{ knp_pagination_render(articles) }}
+                            </div>
+                        </div>
+                    </div>
+
+                {% endif %}
 
 
                 {# Liste des articles #}
@@ -57,11 +70,24 @@
                                     {% endif %}
                                 </div>
                             </div>
-                        {% else %}
-                            <p class="col-12 text-center alert alert-warning">Aucune publication à afficher.</p>
-                        {% endfor %}
+                        </div>
+
+                {% else %}
+                        <p class="col-12 text-center alert alert-warning">Aucune publication à afficher.</p>
                     </div>
-                </div>
+                {% endfor %}
+
+                {% if articles is not empty %}
+
+                    <div class="row">
+                        <div class="col-12 my-3 text-center">
+                            <div class="d-inline-block">
+                                {{ knp_pagination_render(articles) }}
+                            </div>
+                        </div>
+                    </div>
+
+                {% endif %}
             </div>
         </div>
     </div>
