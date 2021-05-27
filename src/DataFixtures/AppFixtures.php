@@ -9,6 +9,7 @@ use App\Entity\Article;
 use \DateTime;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Faker;
+use App\Entity\Comment;
 
 class AppFixtures extends Fixture
 {
@@ -55,6 +56,9 @@ class AppFixtures extends Fixture
 
             // Persistance de l'utilisateur
             $manager->persist($user);
+
+            // Stockage de tous les utilisateurs dans un array php pour créer desc ommentaires après
+            $users[] = $user;
         }
 
         // Création de 200 articles
@@ -73,6 +77,22 @@ class AppFixtures extends Fixture
 
             // Persistance de l'article
             $manager->persist($article);
+
+            // Création entre 0 et 10 comentaires aléatoires par article
+            $rand = rand(0, 10);
+            for ($j = 0; $j < $rand; $j++){
+                // Création d'un nouveau commentaire
+                $comment = new Comment();
+
+                $comment
+                    ->setArticle($article)
+                    ->setPublicationDate($faker->dateTimeBetween('-1 year', 'now'))
+                    ->setContent($faker->paragraph(5))
+                    ->setAuthor($faker->randomElement($users))
+                ;
+
+                $manager->persist($comment);
+            }
         }
 
         $manager->flush();
