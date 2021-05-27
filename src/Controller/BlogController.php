@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleType;
+use App\Form\CommentType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -101,10 +103,53 @@ class BlogController extends AbstractController
      *
      * @Route("/publication/{slug}/", name="publication_view")
      */
-    public function publicationView(Article $article): Response
+    public function publicationView(Article $article, Request $request): Response
     {
-        return $this->render('blog/publicationView.html.twig',[
-            'article' => $article
+
+        // Si l'utilisateur n'est pas connecté, on appel directement la vue sans traiter le formulaire en dessous
+        if(!$this->getUser()){
+            return $this->render('blog/publicationView.html.twig', [
+                'article' => $article,
+            ]);
+        }
+
+        // Création du formulaire de création de commentaire
+        $newComment = new Comment();
+
+        $form = $this->createForm(CommentType::class, $newComment);
+
+        $form->handleRequest($request);
+
+        // Si le formulaire a été envoyé et ne contient pas d'erreur
+        if($form->isSubmitted() && $form->isValid()){
+
+            // On termine d'hydrater le commentaire
+            $newComment
+                ->setPublicationDate( new DateTime() )
+                ->setArticle( $article )
+                ->setAuthor( $this->getUser() )
+            ;
+
+            // Sauvegarde du commentaire dans la BDD
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($newComment);
+            $em->flush();
+
+            // Message flash de succès
+            $this->addFlash('success', 'Votre commentaire a été publié avec succès !');
+
+            // Suppression des deux variables du formulaire et du commentaire nouvellement créé pour éviter que le nouveau formulaire soit rempli après la création
+            unset($newComment);
+            unset($form);
+
+            $newComment = new Comment();
+            $form = $this->createForm(CommentType::class, $newComment);
+
+        }
+
+        return $this->render('blog/publicationView.html.twig', [
+            'article' => $article,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -145,20 +190,15 @@ class BlogController extends AbstractController
     }
 
     /**
-     *
-     * @Route("/publication/suppression/{id}", name="publication_delete")
+     * @Route("publication/suppression/{id}", name="publication_delete")
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function publicationDelete(Article $article, Request $request): Response
     {
-
         // Récupération du token csrf dans l'url
         $tokenCSRF = $request->query->get('csrf_token');
 
-        // Vérification que le token est valide
-        if( !$this->isCsrfTokenValid('blog_publication_delete_' . $article->getId(),
-        $tokenCSRF)){
-
+        if(!$this->isCsrfTokenValid('blog_publication_delete_' . $article->getId(), $tokenCSRF)){
             $this->addFlash('error', 'Token sécurité invalide, veuillez ré-essayer.');
         } else {
 
@@ -168,9 +208,43 @@ class BlogController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'La publication a été supprimée avec succès !');
+
         }
 
         return $this->redirectToRoute('blog_publication_list');
+    }
+
+    /**
+     * Page admin permettant de supprimer un commentaire
+     *
+     * @Route("/commentaire/suppression/{id}/", name="comment_delete")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function commentDelete(Comment $comment, Request $request): Response
+    {
+
+        // Récupération du token csrf dans l'url
+        $tokenCSRF = $request->query->get('csrf_token');
+
+        // Vérification que le token est valide
+        if(!$this->isCsrfTokenValid(
+            'blog_comment_delete_' . $comment->getId(),
+            $tokenCSRF
+        )){
+            $this->addFlash('error', 'Token sécurité invalide, veuillez ré-essayer.');
+        } else {
+
+            // Suppression du commentaire
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($comment);
+            $em->flush();
+
+            $this->addFlash('success', 'Le commentaire a été supprimé avec succès !');
+
+        }
+        return $this->redirectToRoute('blog_publication_view', [
+            'slug' => $comment->getArticle()->getSlug(),
+        ]);
     }
 
     /**

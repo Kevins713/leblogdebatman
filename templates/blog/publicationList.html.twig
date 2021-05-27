@@ -64,7 +64,7 @@
                                             #}
                                             <a onclick="return confirm('Etes vous sur de vouloir supprimer cette publication')" class="text-danger me-3"
                                                href="{{ path('blog_publication_delete', {id: article.id, csrf_token : csrf_token
-                                                ('blog_publication_delete_' ~ article.id)})
+                                                ('blog_publication_delete' ~ article.id)})
                                             }}"><i class="fas fa-trash me-1"></i>Supprimer</a>
                                         </p>
                                     {% endif %}
